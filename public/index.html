@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+Mono&family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.1/dist/cdn.min.js"></script>
+    <script
+      src="https://unpkg.com/htmx.org@2.0.2"
+      integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ"
+      crossorigin="anonymous"
+    ></script>
+    <style>
+      :root {
+        --pico-font-family-sans-serif: "Noto Sans", sans-serif;
+        --pico-font-family-monospace: "Noto Sans Mono", monospace;
+        --pico-font-size: 1rem;
+        --pico-line-height: 1.2;
+      }
+      [x-cloak] {
+        display: none !important;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .fixed {
+        table-layout: fixed;
+        width: 100%;
+      }
+      #todos-list > tr > td:nth-child(1) {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .todos-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body
+    x-data="{ showModal: false, submit() {$nextTick (() => this.showModal = false);} }"
+    x-on:keydown.escape="showModal=false"
+  >
+    <header>
+      <hgroup class="text-center">
+        <h2>TODO</h2>
+        <p>Manage your #todo list.</p>
+      </hgroup>
+    </header>
+    <main class="container">
+      <section>
+        <div class="todos-title">
+          <h2>List of items</h2>
+          <a href="javascript:void(0);" x-on:click="showModal = !showModal"
+            ><span class="material-symbols-rounded"> add_circle </span></a
+          >
+        </div>
+        <table class="striped fixed" id="todos-list">
+          <thead data-theme="light">
+            <tr>
+              <th scope="col">Description</th>
+              <th scope="col">Options</th>
+            </tr>
+          </thead>
+          <tbody
+            id="todos-list"
+            hx-get="/api/v1/todos"
+            hx-trigger="load, todos from:body"
+            hx-target="this"
+            hx-swap="innerHTML"
+          >
+            <tr>
+              <td colspan="2">Loading...</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2">
+                Pending todos:
+                <strong
+                  ><span id="pending">#</span> /
+                  <span id="total">#</span></strong
+                >
+              </td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+      <div
+        role="dialog"
+        tabindex="-1"
+        x-show="showModal"
+        x-on:click.away="showModal = false"
+        x-cloak
+      >
+        <dialog open>
+          <article>
+            <form
+              x-ref="authForm"
+              role="form"
+              hx-post="/api/v1/todos"
+              hx-target-error="#authentication_password"
+            >
+              <header>
+                <button
+                  aria-label="Close"
+                  rel="prev"
+                  x-on:click="showModal = false"
+                ></button>
+                <h2>
+                  <strong>Add a new todo</strong>
+                </h2>
+              </header>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                placeholder="Checkout @std/http/router"
+                value=""
+              />
+              <footer>
+                <input
+                  type="submit"
+                  value="Add"
+                  @click="submit()"
+                  type="submit"
+                />
+              </footer>
+            </form>
+          </article>
+        </dialog>
+      </div>
+    </main>
+    <script defer>
+      const count = { total: 0, pending: 0 };
+      const data = Alpine.reactive(count);
+      const total = document.querySelector("#total");
+      const pending = document.querySelector("#pending");
+      document.body.addEventListener("count", function (e) {
+        data.total = e.detail.total;
+        data.pending = e.detail.pending;
+      });
+      Alpine.effect(() => {
+        total.textContent = data.total;
+        pending.textContent = data.pending;
+      });
+    </script>
+  </body>
+</html>
