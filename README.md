@@ -19,5 +19,5 @@ Frontend stack:
 Run this `deno` command on the root of the project
 
 ```shell
-deno run -A --watch --unstable-kv main.ts
+deno serve --unstable-kv -R main.ts
 ```
