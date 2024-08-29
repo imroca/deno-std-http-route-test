@@ -6,7 +6,7 @@ Backend stack:
 * [Deno](https://docs.deno.com/) 
 * [Deno KV](https://docs.deno.com/deploy/kv/manual/)
 * [@std/http/route](https://jsr.io/@std/http/doc/~/route)
-* [@std/http/file-server](https://jsr.io/@std/http/doc/~/serveFile)
+* [@std/http/file-server](https://jsr.io/@std/http/doc/~/serveDir)
 * [@std/ulid](https://jsr.io/@std/ulid)
 
 Frontend stack:
@@ -16,8 +16,4 @@ Frontend stack:
 
 ## Usage
 
-Run this `deno` command on the root of the project
-
-```shell
-deno serve --unstable-kv -R main.ts
-```
+Run this `deno task dev` command on the root of the project to start the server.

@@ -1,6 +1,6 @@
 {
   "tasks": {
-    "dev": "deno run -A --watch main.ts"
+    "dev": "deno serve --unstable-kv --watch -R main.ts"
   },
   "permissions": {
     "net": "true"
