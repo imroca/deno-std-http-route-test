@@ -25,6 +25,10 @@ function defaultHandler(_req: Request) {
   return new Response("Not found", { status: 404 });
 }
 
-await Deno.serve(
-  route(routes, defaultHandler),
-).finished;
+const handler = route(routes, defaultHandler);
+
+export default {
+  fetch(req) {
+    return handler(req);
+  },
+} satisfies Deno.ServeDefaultExport;
